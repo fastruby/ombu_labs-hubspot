@@ -1,5 +1,5 @@
 require "ombu_labs/hubspot/version"
-require "ombu_labs/hubspot/railtie"
+require "ombu_labs/hubspot/engine"
 
 module OmbuLabs
   module Hubspot

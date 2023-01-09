@@ -1,3 +1,5 @@
+require 'hubspot-api-client'
+
 class HubspotService
     attr_reader :contact, :pipeline
   
@@ -19,6 +21,7 @@ class HubspotService
     private
   
     def contact_exists?
+  
       search_api = ::Hubspot::Crm::Contacts::SearchApi.new
       results = search_api.do_search(contact_search_request, auth_names: "oauth2").results
       results.present?
