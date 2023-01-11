@@ -1,3 +1,4 @@
+require "hubspot-api-client"
 require "ombu_labs/hubspot/version"
 require "ombu_labs/hubspot/engine"
 
