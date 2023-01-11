@@ -1,5 +1,5 @@
 # OmbuLabs::Hubspot
-Short description and motivation.
+Source code for OmbuLabs Hubspot integration
 
 ## Usage
 How to use my plugin.
