@@ -52,7 +52,7 @@ class HubspotService
         firstname: contact.name,
         email: contact.email,
         contact_message: contact.message,
-        request_type: contact.request_type,
+        request_type: contact&.request_type,
         utm_campaign: contact.utm_campaign,
         utm_medium: contact.utm_medium,
         utm_source: contact.utm_source,
