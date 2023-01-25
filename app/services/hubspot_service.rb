@@ -2,11 +2,11 @@ require 'hubspot-api-client'
 
 class HubspotService
     attr_reader :contact, :pipeline
-  
+
     def initialize(contact:)
       @contact = contact
     end
-  
+
     def save_lead_info
       return if contact_exists?
       hubspot_contact = create_contact
@@ -17,36 +17,36 @@ class HubspotService
       create_association({from_name: "deal", to_name: "company", from_id: deal.id, to_id: company.id, type: "deal_to_company"})
       create_association({from_name: "deal", to_name: "contact", from_id: deal.id, to_id: hubspot_contact.id, type: "deal_to_contact"})
     end
-  
+
     private
-  
+
     def contact_exists?
-  
+
       search_api = ::Hubspot::Crm::Contacts::SearchApi.new
       results = search_api.do_search(contact_search_request, auth_names: "oauth2").results
       results.present?
     end
-  
+
     def get_line_item
       search_api = ::Hubspot::Crm::LineItems::SearchApi.new
       search_api.do_search(line_item_search_request, auth_names: "oauth2").results
     end
-  
+
     def get_company(company_domain)
       search_api = ::Hubspot::Crm::Companies::SearchApi.new
       search_api.do_search(company_search_request(company_domain), auth_names: "oauth2").results.first
     end
-  
+
     def create_contact
       contacts_api = ::Hubspot::Crm::Contacts::BasicApi.new
       contacts_api.create(properties: contact_properties)
     end
-  
+
     def create_deal
       deals_api = ::Hubspot::Crm::Deals::BasicApi.new
       deals_api.create(properties: deal_properties)
     end
-  
+
     def contact_properties
       {
         firstname: contact.name,
@@ -56,30 +56,32 @@ class HubspotService
         utm_campaign: contact.utm_campaign,
         utm_medium: contact.utm_medium,
         utm_source: contact.utm_source,
-        gclid: contact.gclid
+        gclid: contact.gclid,
+        in_house_developers: contact.in_house_developers,
+        starting_at: contact.starting_at
       }
     end
-  
+
     def deal_properties
       @pipeline = get_pipeline
-  
+
       {
         dealname: contact.name.capitalize,
         pipeline: pipeline.id,
         dealstage: get_cold_stage.id
       }
     end
-  
+
     def get_pipeline
       pipeline_api = ::Hubspot::Crm::Pipelines::PipelinesApi.new
       pipelines = pipeline_api.get_all("DEAL").results
       pipelines.find { |pipeline| pipeline.label == ENV["HUBSPOT_PIPELINE_LABEL"] }
     end
-  
+
     def get_cold_stage
       pipeline.stages.find { |stage| stage.label == "Cold" }
     end
-  
+
     def contact_search_request
       filter = ::Hubspot::Crm::Contacts::Filter.new(
         property_name: "email",
@@ -89,7 +91,7 @@ class HubspotService
       filter_group = ::Hubspot::Crm::Contacts::FilterGroup.new(filters: [filter])
       ::Hubspot::Crm::Contacts::PublicObjectSearchRequest.new(filter_groups: [filter_group])
     end
-  
+
     def company_search_request(company_domain)
       filter = ::Hubspot::Crm::Companies::Filter.new(
         property_name: "domain",
@@ -99,7 +101,7 @@ class HubspotService
       filter_group = ::Hubspot::Crm::LineItems::FilterGroup.new(filters: [filter])
       ::Hubspot::Crm::LineItems::PublicObjectSearchRequest.new(filter_groups: [filter_group])
     end
-  
+
     def create_association(properties)
       connection = ::Hubspot::Crm::Associations::BatchApi.new
       connection.create(
@@ -111,7 +113,7 @@ class HubspotService
         }
       )
     end
-  
+
     def create_company(email)
       company_domain = email.split("@").last
       existing_company = get_company(company_domain)
