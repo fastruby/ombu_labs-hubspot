@@ -4,14 +4,14 @@ class HubspotService
     attr_reader :contact, :pipeline
 
     def initialize(contact:)
-      @contact = contact
+      @contact = contact.attributes
     end
 
     def save_lead_info
       return if contact_exists?
       hubspot_contact = create_contact
       deal = create_deal
-      company = create_company(contact.email)
+      company = create_company(contact["email"])
       create_association({from_name: "contact", to_name: "deal", from_id: hubspot_contact.id, to_id: deal.id, type: "contact_to-deal"})
       create_association({from_name: "contact", to_name: "company", from_id: hubspot_contact.id, to_id: company.id, type: "contact_to_company"})
       create_association({from_name: "deal", to_name: "company", from_id: deal.id, to_id: company.id, type: "deal_to_company"})
@@ -49,16 +49,16 @@ class HubspotService
 
     def contact_properties
       {
-        firstname: contact.name,
-        email: contact.email,
-        contact_message: contact.message,
-        request_type: contact&.request_type,
-        utm_campaign: contact.utm_campaign,
-        utm_medium: contact.utm_medium,
-        utm_source: contact.utm_source,
-        gclid: contact.gclid,
-        in_house_developers: contact.in_house_developers,
-        starting_at: contact.starting_at
+        firstname: contact["name"],
+        email: contact["email"],
+        contact_message: contact["message"],
+        request_type: contact["request_type"],
+        utm_campaign: contact["utm_campaign"],
+        utm_medium: contact["utm_medium"],
+        utm_source: contact["utm_source"],
+        gclid: contact["gclid"],
+        in_house_developers: contact["in_house_developers"],
+        starting_at: contact["starting_at"]
       }
     end
 
@@ -66,7 +66,7 @@ class HubspotService
       @pipeline = get_pipeline
 
       {
-        dealname: contact.name.capitalize,
+        dealname: contact["name"].capitalize,
         pipeline: pipeline.id,
         dealstage: get_cold_stage.id
       }
@@ -86,7 +86,7 @@ class HubspotService
       filter = ::Hubspot::Crm::Contacts::Filter.new(
         property_name: "email",
         operator: "EQ",
-        value: contact.email
+        value: contact["email"]
       )
       filter_group = ::Hubspot::Crm::Contacts::FilterGroup.new(filters: [filter])
       ::Hubspot::Crm::Contacts::PublicObjectSearchRequest.new(filter_groups: [filter_group])
