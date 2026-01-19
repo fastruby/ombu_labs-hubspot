@@ -21,6 +21,6 @@ Gem::Specification.new do |spec|
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
   spec.add_dependency "rails", ">= 6.0"
-  spec.add_dependency "hubspot-api-client", "< 17.0"
+  spec.add_dependency "hubspot-api-client", ">= 14.0", "< 17.0"
   spec.add_dependency "sidekiq", ">= 5.0"
 end
