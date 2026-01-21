@@ -83,23 +83,35 @@ class HubspotService
     end
 
     def contact_search_request
-      filter = ::Hubspot::Crm::Contacts::Filter.new(
-        property_name: "email",
-        operator: "EQ",
-        value: contact["email"]
-      )
-      filter_group = ::Hubspot::Crm::Contacts::FilterGroup.new(filters: [filter])
-      ::Hubspot::Crm::Contacts::PublicObjectSearchRequest.new(filter_groups: [filter_group])
+      {
+        filter_groups: [
+          {
+            filters: [
+              {
+                property_name: "email",
+                operator: "EQ",
+                value: contact["email"]
+              }
+            ]
+          }
+        ]
+      }
     end
 
     def company_search_request(company_domain)
-      filter = ::Hubspot::Crm::Companies::Filter.new(
-        property_name: "domain",
-        operator: "EQ",
-        value: company_domain
-      )
-      filter_group = ::Hubspot::Crm::Companies::FilterGroup.new(filters: [filter])
-      ::Hubspot::Crm::Companies::PublicObjectSearchRequest.new(filter_groups: [filter_group])
+      {
+        filter_groups: [
+          {
+            filters: [
+              {
+                property_name: "domain",
+                operator: "EQ",
+                value: company_domain
+              }
+            ]
+          }
+        ]
+      }
     end
 
     def create_association(properties)
