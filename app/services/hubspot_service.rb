@@ -23,18 +23,18 @@ class HubspotService
     def contact_exists?
 
       search_api = Hubspot.client.crm.contacts.search_api
-      results = search_api.do_search(contact_search_request).results
+      results = search_api.do_search(public_object_search_request: contact_search_request).results
       results.present?
     end
 
     def get_line_item
       search_api = Hubspot.client.crm.line_items.search_api
-      search_api.do_search(line_item_search_request).results
+      search_api.do_search(public_object_search_request: line_item_search_request).results
     end
 
     def get_company(company_domain)
       search_api = Hubspot.client.crm.companies.search_api
-      search_api.do_search(company_search_request(company_domain)).results.first
+      search_api.do_search(public_object_search_request: company_search_request(company_domain)).results.first
     end
 
     def create_contact
