@@ -42,12 +42,16 @@ class HubspotService
 
     def create_contact
       contacts_api = Hubspot.client.crm.contacts.basic_api
-      contacts_api.create(simple_public_object_input: contact_properties)
+      result = contacts_api.create(simple_public_object_input: { properties: contact_properties })
+      Rails.logger.info "[HubspotService] Contact created"
+      result
     end
 
     def create_deal
       deals_api = Hubspot.client.crm.deals.basic_api
-      deals_api.create(simple_public_object_input: deal_properties)
+      result = deals_api.create(simple_public_object_input: { properties: deal_properties })
+      Rails.logger.info "[HubspotService] Deal created"
+      result
     end
 
     def contact_properties
@@ -61,7 +65,8 @@ class HubspotService
         utm_source: contact["utm_source"],
         gclid: contact["gclid"],
         in_house_developers: contact["in_house_developers"],
-        starting_at: contact["starting_at"]
+        starting_at: contact["starting_at"],
+        hs_legal_basis: "Legitimate interest – prospect/lead"
       }
     end
 
@@ -134,17 +139,24 @@ class HubspotService
           ]
         }
       )
+      Rails.logger.info "[HubspotService] Association created"
+      result
     end
 
     def create_company(email)
       company_domain = email.split("@").last
       existing_company = get_company(company_domain)
-      return existing_company if existing_company.present?
+      if existing_company.present?
+        Rails.logger.info "[HubspotService] Company found"
+        return existing_company
+      end
       company_name = company_domain.split(".").first
       company_api = Hubspot.client.crm.companies.basic_api
-      company_api.create(properties: {
+      result = company_api.create(properties: {
         domain: company_domain,
         name: company_name.capitalize
       })
+      Rails.logger.info "[HubspotService] Company created"
+      result
     end
   end
