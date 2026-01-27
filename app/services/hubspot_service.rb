@@ -124,6 +124,16 @@ class HubspotService
       }
     end
 
+    def line_item_search_request
+      {
+        filterGroups: [],
+        sorts: [],
+        properties: [],
+        limit: 100,
+        after: 0
+      }
+    end
+
     def create_association(from_type:, to_type:, from_id:, to_id:, type_id:)
       batch_api = Hubspot.client.crm.associations.v4.batch_api
       result = batch_api.create(
