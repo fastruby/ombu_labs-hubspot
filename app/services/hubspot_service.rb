@@ -152,10 +152,14 @@ class HubspotService
       end
       company_name = company_domain.split(".").first
       company_api = Hubspot.client.crm.companies.basic_api
-      result = company_api.create(properties: {
-        domain: company_domain,
-        name: company_name.capitalize
-      })
+      result = company_api.create(
+        simple_public_object_input: {
+          properties: {
+            domain: company_domain,
+            name: company_name.capitalize
+          }
+        }
+      )
       Rails.logger.info "[HubspotService] Company created"
       result
     end
