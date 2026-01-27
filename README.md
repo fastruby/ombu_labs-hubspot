@@ -2,7 +2,21 @@
 Source code for OmbuLabs Hubspot integration
 
 ## Usage
-How to use my plugin.
+Create a Hubspot client instance:
+
+```ruby
+module Hubspot
+  INSTANCE_MUTEX = Mutex.new
+  def self.client
+    return @client if defined?(@client) && @client
+    INSTANCE_MUTEX.synchronize do
+      @client ||= Hubspot::Client.new(access_token: ENV["HUBSPOT_ACCESS_TOKEN"], auth_names: "oauth2")
+    end
+  end
+end
+```
+
+Then you can use the `Hubspot.client` to interact with the Hubspot API.
 
 ## Installation
 Add this line to your application's Gemfile:
